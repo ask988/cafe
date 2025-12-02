@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>StudioLight — Photography Portfolio (Beginner)</title>
+  <meta name="description" content="Simple photography portfolio template for 1st-year students. Categories, gallery and booking form included." />
+
+  <style>
+    /* Very small amount of CSS — beginner friendly */
+    body{font-family:Arial,Helvetica,sans-serif;margin:18px;color:#111}
+    header{display:flex;align-items:center;justify-content:space-between}
+    .logo{font-weight:700;font-size:20px}
+    nav a{margin-left:10px;text-decoration:none;color:#0366d6}
+    .grid{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
+    .card{border:1px solid #ddd;padding:8px;border-radius:6px;background:#fff;width:300px}
+    .thumb{width:100%;height:180px;object-fit:cover;border-radius:4px}
+    .categories{margin-top:12px}
+    .btn{display:inline-block;padding:8px 10px;border-radius:6px;border:1px solid #0366d6;color:#0366d6;text-decoration:none}
+    form input, form select, form textarea{width:100%;padding:8px;margin-top:6px;border:1px solid #ccc;border-radius:6px}
+    footer{margin-top:20px;color:#666}
+    /* simple lightbox overlay */
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;visibility:hidden;opacity:0;transition:opacity .2s}
+    .overlay.show{visibility:visible;opacity:1}
+    .overlay img{max-width:90%;max-height:90%;border-radius:8px}
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <div class="logo">StudioLight</div>
+      
+    </div>
+    <nav>
+      <a href="#about">About</a>
+      <a href="#gallery">Gallery</a>
+      <a href="#booking" class="btn">Book a session</a>
+    </nav>
+  </header>
+
+  <main>
+    <section id="about" style="margin-top:18px">
+      <h1 style="margin:0 0 6px 0">Hi — I'm Anshul, a student photographer</h1>
+      <p style="margin:0;color:#444">I enjoy shooting portraits, nature, and events. This simple site shows photography categories, a small gallery, and a basic booking form for practice projects.</p>
+      <div class="categories">
+        <strong>Categories:</strong>
+        <a href="#" onclick="filterCat(event,'all')">All</a> |
+        <a href="#" onclick="filterCat(event,'portraits')">Portraits</a> |
+        <a href="#" onclick="filterCat(event,'nature')">Nature</a> |
+        <a href="#" onclick="filterCat(event,'events')">Events</a> |
+        <a href="#" onclick="filterCat(event,'street')">Street</a>
+      </div>
+    </section>
+
+    <section id="gallery" style="margin-top:18px">
+      <h2>Gallery</h2>
+      <p style="color:#666">Click any image to view larger. Images are sample placeholders — replace with your photos.</p>
+
+      <div class="grid" id="galleryGrid">
+
+        <!-- Each figure has data-category attribute for filtering -->
+        <figure class="card" data-category="portraits">
+          <img class="thumb" src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&q=60" alt="Portrait sample" loading="lazy" onclick="openLightbox(this)" />
+          <figcaption><strong>Portrait — Soft light</strong><div style="font-size:12px;color:#666">Tag: portraits</div></figcaption>
+        </figure>
+
+        <figure class="card" data-category="nature">
+          <img class="thumb" src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=800&q=60" alt="Nature sample" loading="lazy" onclick="openLightbox(this)" />
+          <figcaption><strong>Nature — Morning mist</strong><div style="font-size:12px;color:#666">Tag: nature</div></figcaption>
+        </figure>
+
+        <figure class="card" data-category="events">
+          <img class="thumb" src="https://images.unsplash.com/photo-1509223197845-458d87318791?w=800&q=60" alt="Events sample" loading="lazy" onclick="openLightbox(this)" />
+          <figcaption><strong>Event — Live show</strong><div style="font-size:12px;color:#666">Tag: events</div></figcaption>
+        </figure>
+
+        <figure class="card" data-category="street">
+          <img class="thumb" src="https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=800&q=60" alt="Street sample" loading="lazy" onclick="openLightbox(this)" />
+          <figcaption><strong>Street — City life</strong><div style="font-size:12px;color:#666">Tag: street</div></figcaption>
+        </figure>
+
+        <figure class="card" data-category="portraits">
+          <img class="thumb" src="https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=800&q=60" alt="Portrait sample 2" loading="lazy" onclick="openLightbox(this)" />
+          <figcaption><strong>Portrait — Natural light</strong><div style="font-size:12px;color:#666">Tag: portraits</div></figcaption>
+        </figure>
+
+      </div>
+    </section>
+
+    <section id="booking" style="margin-top:22px">
+      <h2>Book a Session</h2>
+      <p style="color:#666;margin:4px 0 8px 0">Use this form to request a beginner-friendly shoot. This is a client-side example — no server needed for learning.</p>
+
+      <form id="bookingForm" onsubmit="submitBooking(event)" style="max-width:520px">
+        <label>Your name</label>
+        <input type="text" name="name" required placeholder="e.g. Priya Sharma" />
+
+        <label>Email</label>
+        <input type="email" name="email" required placeholder="you@example.com" />
+
+        <label>Category</label>
+        <select name="category" required>
+          <option value="portraits">Portraits</option>
+          <option value="nature">Nature</option>
+          <option value="events">Events</option>
+          <option value="street">Street</option>
+        </select>
+
+        <label>Preferred date</label>
+        <input type="date" name="date" required />
+
+        <label>Message (optional)</label>
+        <textarea name="message" rows="3" placeholder="Tell me about the shoot or location"></textarea>
+
+        <div style="margin-top:8px;display:flex;gap:8px">
+          <button type="submit" class="btn">Request booking</button>
+          <button type="button" onclick="clearBookings()" style="background:#fff;border:1px solid #ccc">Clear saved</button>
+        </div>
+      </form>
+
+      <div id="bookingMsg" style="margin-top:10px;color:green"></div>
+
+    </section>
+
+    <section style="margin-top:20px">
+      <h3>Saved booking requests (for demo)</h3>
+      <div id="savedList" style="color:#444"></div>
+    </section>
+
+  </main>
+
+  <div class="overlay" id="lightbox" onclick="closeLightbox(event)"><img src="" alt="large view"></div>
+
+  <footer>
+    <p style="margin:0">&copy; <span id="year"></span> StudioLight — Student portfolio. Replace images and text with your own work.</p>
+  </footer>
+
+  <script>
+    // Minimal JS for filtering, lightbox and a simple client-side booking demo
+    function filterCat(e,cat){e.preventDefault();
+      const items = document.querySelectorAll('#galleryGrid figure');
+      items.forEach(f => { f.style.display = (cat==='all' || f.dataset.category===cat) ? '' : 'none' });
+    }
+
+    // Lightbox
+    function openLightbox(img){
+      const overlay = document.getElementById('lightbox');
+      overlay.querySelector('img').src = img.src;
+      overlay.classList.add('show');
+    }
+    function closeLightbox(e){
+      if(e.target.id === 'lightbox' || e.target.tagName === 'IMG'){
+        document.getElementById('lightbox').classList.remove('show');
+      }
+    }
+
+    // Booking (client-side) saved to localStorage for demo purposes only
+    const BOOKING_KEY = 'studiolight_bookings_v1';
+    function loadBookings(){
+      try{ return JSON.parse(localStorage.getItem(BOOKING_KEY) || '[]') }catch(e){return[]}
+    }
+    function saveBookings(list){ localStorage.setItem(BOOKING_KEY, JSON.stringify(list)) }
+
+    function renderBookings(){
+      const list = loadBookings();
+      const wrap = document.getElementById('savedList');
+      if(list.length===0){ wrap.textContent = 'No saved requests.'; return }
+      wrap.innerHTML = '';
+      list.forEach((b,i)=>{
+        const div = document.createElement('div');
+        div.style.border='1px solid #eee'; div.style.padding='8px'; div.style.marginTop='8px'; div.style.borderRadius='6px';
+        div.innerHTML = `<strong>${b.name}</strong> — ${b.category} — ${b.date} <div style="font-size:13px;color:#555">${b.email}</div><div style="margin-top:6px">${b.message||''}</div>`;
+        wrap.appendChild(div);
+      })
+    }
+
+    function submitBooking(e){
+      e.preventDefault();
+      const f = e.target;
+      const data = {name:f.name.value.trim(), email:f.email.value.trim(), category:f.category.value, date:f.date.value, message:f.message.value.trim()};
+      if(!data.name||!data.email||!data.date) return alert('Please fill required fields');
+      const list = loadBookings(); list.unshift(data); saveBookings(list);
+      document.getElementById('bookingMsg').textContent = 'Request saved locally — thank you! (This is a demo)';
+      f.reset(); renderBookings();
+    }
+
+    function clearBookings(){ if(!confirm('Clear all saved booking requests?')) return; localStorage.removeItem(BOOKING_KEY); renderBookings(); document.getElementById('bookingMsg').textContent='Saved requests cleared.' }
+
+    document.addEventListener('DOMContentLoaded', ()=>{
+      document.getElementById('year').textContent = new Date().getFullYear();
+      renderBookings();
+    });
+  </script>
+</body>
+</html>
