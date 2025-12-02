@@ -1,0 +1,145 @@
+Name: Anshul Shyam Kumar 
+Roll No.: 202501100500223 
+
+Source code:
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Masala Junction - Simple Demo</title>
+  <style>
+    /* Simple, beginner-friendly styles */
+    body{font-family:Arial,Helvetica,sans-serif;margin:0;background:#fff8f0;color:#222}
+    header{background:#b33f3f;color:#fff;padding:16px;text-align:center}
+    main{max-width:800px;margin:20px auto;padding:0 16px}
+    .card{background:#fff;padding:12px;border-radius:6px;margin-bottom:14px;border:1px solid #eee}
+    h1,h2{margin:6px 0}
+    label{display:block;margin-top:8px}
+    input,select,textarea{width:100%;padding:8px;margin-top:6px;border:1px solid #ccc;border-radius:4px}
+    button{background:#b33f3f;color:#fff;border:none;padding:10px 12px;border-radius:6px;cursor:pointer;margin-top:10px}
+    .dish{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed #f0f0f0}
+    .small{font-size:13px;color:#666}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Masala Junction</h1>
+    <div class="small">A simple fictional Indian restaurant</div>
+  </header>
+
+  <main>
+    <!-- Menu -->
+    <section class="card">
+      <h2>Menu</h2>
+      <p class="small">All prices are fictional (INR)</p>
+
+      <h3>Starters</h3>
+      <div class="dish"><div>Samosa (2 pcs)</div><div>₹60</div></div>
+      <div class="dish"><div>Paani Puri (6 pcs)</div><div>₹80</div></div>
+      <div class="dish"><div>Paneer Tikka</div><div>₹240</div></div>
+
+      <h3>Main Courses</h3>
+      <div class="dish"><div>Butter Chicken</div><div>₹320</div></div>
+      <div class="dish"><div>Dal Makhani</div><div>₹220</div></div>
+      <div class="dish"><div>Veg Biryani</div><div>₹260</div></div>
+
+      <h3>Breads & Sides</h3>
+      <div class="dish"><div>Naan</div><div>₹40</div></div>
+      <div class="dish"><div>Roti</div><div>₹20</div></div>
+
+      <h3>Desserts</h3>
+      <div class="dish"><div>Gulab Jamun (2 pcs)</div><div>₹80</div></div>
+      <div class="dish"><div>Rasmalai (2 pcs)</div><div>₹80</div></div>
+    </section>
+
+    <!-- Reservation form -->
+    <section class="card">
+      <h2>Reserve a Table</h2>
+      <form id="reserveForm" onsubmit="return reserveTable(event)">
+        <label>Name <input id="name" required></label>
+        <label>Phone <input id="phone" required placeholder="e.g. +91 98765 43210"></label>
+        <label>Date <input id="date" type="date" required></label>
+        <label>Time <input id="time" type="time" required></label>
+        <label>Party Size <select id="party"><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option></select></label>
+        <button type="submit">Book Now</button>
+        <div id="resMessage" class="small" style="margin-top:8px"></div>
+      </form>
+    </section>
+
+    <!-- Reviews -->
+    <section class="card">
+      <h2>Customer Reviews</h2>
+      <form id="reviewForm" onsubmit="return addReview(event)">
+        <label>Your name <input id="rname" required></label>
+        <label>Rating <select id="rating"><option>5</option><option>4</option><option>3</option><option>2</option><option>1</option></select></label>
+        <label>Review <textarea id="rtext" rows="3" required></textarea></label>
+        <button type="submit">Submit Review</button>
+      </form>
+
+      <div id="reviews" style="margin-top:10px"></div>
+    </section>
+
+  </main>
+
+  <script>
+    // Simple reservation using localStorage
+    function reserveTable(e){
+      e.preventDefault();
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const date = document.getElementById('date').value;
+      const time = document.getElementById('time').value;
+      const party = document.getElementById('party').value;
+      const msg = document.getElementById('resMessage');
+
+      if(!date || !time){ msg.textContent = 'Please select date and time.'; return false }
+      const res = JSON.parse(localStorage.getItem('masala_res') || '[]');
+      res.push({name,phone,date,time,party,created:Date.now()});
+      localStorage.setItem('masala_res', JSON.stringify(res));
+      msg.textContent = `Thanks ${name.split(' ')[0]}! Table for ${party} on ${date} at ${time} is noted.`;
+      e.target.reset();
+      return false;
+    }
+
+    // Reviews: save to localStorage and render
+    function renderReviews(){
+      const list = JSON.parse(localStorage.getItem('masala_reviews') || '[]');
+      const container = document.getElementById('reviews');
+      container.innerHTML = '';
+      if(list.length===0){ container.innerHTML = '<div class="small">No reviews yet.</div>'; return }
+      list.slice().reverse().forEach(r=>{
+        const div = document.createElement('div');
+        div.style.borderTop = '1px solid #f0f0f0';
+        div.style.padding = '8px 0';
+        div.innerHTML = `<strong>${escapeHtml(r.name)}</strong> <span class="small">- ${r.rating}★</span><div class="small">${new Date(r.created).toLocaleString()}</div><div style="margin-top:6px">${escapeHtml(r.text)}</div>`;
+        container.appendChild(div);
+      })
+    }
+
+    function addReview(e){
+      e.preventDefault();
+      const name = document.getElementById('rname').value.trim();
+      const rating = document.getElementById('rating').value;
+      const text = document.getElementById('rtext').value.trim();
+      const reviews = JSON.parse(localStorage.getItem('masala_reviews') || '[]');
+      reviews.push({name,rating,text,created:Date.now()});
+      localStorage.setItem('masala_reviews', JSON.stringify(reviews));
+      e.target.reset();
+      renderReviews();
+      return false;
+    }
+
+    function escapeHtml(s){ return (s || '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;') }
+
+    // initialize example reviews if none
+    if(!localStorage.getItem('masala_reviews')){
+      localStorage.setItem('masala_reviews', JSON.stringify([
+        {name:'Riya',rating:5,text:'Loved the butter chicken!',created:Date.now()-3600000},
+        {name:'Amit',rating:4,text:'Good flavours and quick service.',created:Date.now()-7200000}
+      ]));
+    }
+    renderReviews();
+  </script>
+</body>
+</html>
